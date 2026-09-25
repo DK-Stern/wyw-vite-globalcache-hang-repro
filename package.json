@@ -1,0 +1,25 @@
+{
+  "name": "wyw-vite-globalcache-hang-repro",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.20.0",
+  "scripts": {
+    "build": "vite build",
+    "build:global-cache": "WYW_GLOBAL_CACHE=true vite build",
+    "build:timeout": "timeout 60 vite build; echo \"exit code: $?\""
+  },
+  "dependencies": {
+    "@linaria/core": "8.2.0",
+    "@linaria/react": "8.2.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "6.1.1",
+    "@wyw-in-js/vite": "2.5.1",
+    "vite": "8.3.0"
+  }
+}
