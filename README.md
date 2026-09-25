@@ -36,7 +36,7 @@ pnpm build:global-cache
 
 ## Actual Behaviour
 
-With `globalCache: false` (the default), `vite build` prints `✓ built in Xms` but the process hangs indefinitely. A `report-active-handles` diagnostic plugin logs the leak ~1 s after the build summary line.
+With `globalCache: false` (non-default, the default is `true`), `vite build` prints `✓ built in Xms` but the process hangs indefinitely. A `report-active-handles` diagnostic plugin logs the leak ~1 s after the build summary line.
 
 ### Observed Output (`pnpm build`, killed after 90 s)
 
@@ -72,7 +72,7 @@ Three components combine to cause the leak:
 
 ### 1. Per-file `TransformCacheCollection` when `globalCache: false`
 
-`@wyw-in-js/transform/esm/transform.js` line 31–33:
+`@wyw-in-js/transform/esm/transform.js` lines 31–34:
 
 ```js
 if (!isFeatureEnabled(pluginOptions.features, 'globalCache', options.filename)) {
@@ -94,7 +94,7 @@ The `evalBrokers` WeakMap uses the cache object itself as the scope key. Because
 
 ### 3. Vite plugin only disposes `clientCache` and `ssrCache`
 
-`@wyw-in-js/vite/esm/index.mjs` lines 292–405:
+`@wyw-in-js/vite/esm/index.mjs` lines 292–301 (cache setup and `disposeEvalBrokers`) and 402–405 (`buildEnd`):
 
 ```js
 const clientCache = new TransformCacheCollection();  // created once
